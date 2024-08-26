@@ -10,10 +10,10 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
 @app.route('/')
-def main_page():
+def show_main_page():
     return render_template('index.html')
 
 
 @app.route('/urls')
-def get_added_urls():
+def show_added_urls_page():
     return render_template('urls.html')
