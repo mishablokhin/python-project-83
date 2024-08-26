@@ -10,3 +10,6 @@ start:
 
 lint:
 	poetry run flake8 page_analyzer
+
+debug:
+	poetry run python -m flask --app page_analyzer:app --debug run
