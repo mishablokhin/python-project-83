@@ -13,3 +13,6 @@ lint:
 
 debug:
 	poetry run python -m flask --app page_analyzer:app --debug run
+
+build:
+	./build.sh
