@@ -14,7 +14,10 @@ from .db import (
     is_url_already_exists,
     add_new_url_to_db,
     get_all_urls,
-    get_url_info_by_id
+    get_url_info_by_id,
+    add_url_check,
+    get_url_checks_by_id,
+    get_latest_url_check
 )
 from .utilities import is_valid_url, normalize_url
 from dotenv import load_dotenv
@@ -37,7 +40,8 @@ def show_main_page():
 def show_added_urls_page():
     conn = open_connection()
     urls = get_all_urls(conn)
-    return render_template('urls.html', urls=urls)
+    urls_latest_check = get_latest_url_check(conn)
+    return render_template('urls.html', urls=urls, checks=urls_latest_check)
 
 
 # Страница с подробностями о конкретном адресе
@@ -45,8 +49,10 @@ def show_added_urls_page():
 def show_url_info(id):
     conn = open_connection()
     url_info = get_url_info_by_id(conn, id)
+    url_checks_info = get_url_checks_by_id(conn, id)
     messages = get_flashed_messages(with_categories=True)
-    return render_template('url.html', url_info=url_info, messages=messages)
+    return render_template('url.html', url_info=url_info,
+                           checks=url_checks_info, messages=messages)
 
 
 # Обработчик формы добавления нового сайта для проверки
@@ -66,3 +72,12 @@ def add_new_url():
     else:
         flash('Некорректный URL', 'alert-danger')
         return redirect(url_for('show_main_page'))
+
+
+# Обработчик формы запуска проверки для сайта
+@app.post('/urls/<id>/check')
+def check_url(id):
+    conn = open_connection()
+    add_url_check(conn, id)
+    flash('Страница успешно проверена', 'alert-success')
+    return redirect(url_for('show_url_info', id=id))
