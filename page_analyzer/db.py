@@ -53,3 +53,38 @@ def get_url_info_by_id(conn, id):
             (id)
         )
         return cursor.fetchone()
+
+
+def get_url_checks_by_id(conn, id):
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
+        cursor.execute(
+            """
+            SELECT * FROM url_checks
+            WHERE url_id = %s
+            ORDER BY created_at DESC, id DESC
+            """,
+            (id)
+        )
+        return cursor.fetchall()
+
+
+def add_url_check(conn, id):
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    with conn.cursor() as cursor:
+        cursor.execute(
+            "INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s)",
+            (id, current_date)
+        )
+        commit_changes(conn)
+
+
+def get_latest_url_check(conn):
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
+        cursor.execute(
+            """
+            SELECT DISTINCT ON (url_id) url_id, created_at
+            FROM url_checks
+            ORDER BY url_id, created_at DESC;
+            """
+        )
+        return cursor.fetchall()
