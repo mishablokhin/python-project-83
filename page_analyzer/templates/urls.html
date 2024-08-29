@@ -19,18 +19,30 @@
       {% if urls %}
       {% for url in urls %}
       <tr>
-        <td>{{url.id}}</td>
+        <td>{{ url.id }}</td>
         <td>
           <a href="{{ url_for('show_url_info', id=url.id) }}">
           {{ url.name }}
           </a>
         </td>
-        <td></td>
-        <td></td>
+        <td>
+          {% for check in checks %}
+            {% if check.url_id == url.id %}
+              {{ check.created_at }}
+            {% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% for check in checks %}
+            {% if check.url_id == url.id %}
+              {{ check.status_code }}
+            {% endif %}
+          {% endfor %}
+        </td>
       </tr>
       {% endfor %}
       {% endif %}
     </tbody>
-  </table>
+</table>
 </div>
 {% endblock %}
