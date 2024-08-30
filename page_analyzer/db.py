@@ -73,7 +73,11 @@ def add_url_check(conn, id):
     current_date = datetime.now().strftime('%Y-%m-%d')
     with conn.cursor() as cursor:
         cursor.execute(
-            "INSERT INTO url_checks (url_id, status_code, created_at) VALUES (%s, %s, %s)",
+            """
+            INSERT INTO url_checks
+            (url_id, status_code, created_at)
+            VALUES (%s, %s, %s)
+            """,
             (id, 200, current_date)
         )
         commit_changes(conn)
