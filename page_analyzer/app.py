@@ -17,9 +17,10 @@ from .db import (
     get_url_info_by_id,
     add_url_check,
     get_url_checks_by_id,
-    get_latest_url_check
+    get_latest_url_check,
+    get_url_name_by_id
 )
-from .utilities import is_valid_url, normalize_url
+from .utilities import is_valid_url, normalize_url, make_request_to_url
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -78,6 +79,10 @@ def add_new_url():
 @app.post('/urls/<id>/check')
 def check_url(id):
     conn = open_connection()
-    add_url_check(conn, id)
-    flash('Страница успешно проверена', 'alert-success')
+    url_name = get_url_name_by_id(conn, id)
+    if make_request_to_url(url_name) == 200:
+        add_url_check(conn, id)
+        flash('Страница успешно проверена', 'alert-success')
+    else:
+        flash('Произошла ошибка при проверке', 'alert-danger')
     return redirect(url_for('show_url_info', id=id))
