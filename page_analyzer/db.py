@@ -50,8 +50,9 @@ def get_url_info_by_id(conn, id):
     with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
         cursor.execute(
             "SELECT * FROM urls WHERE id = %s",
-            (id)
+            (int(id),)
         )
+        print(f"Executing query with id: {id} of type {type(id)}")
         return cursor.fetchone()
 
 
@@ -72,17 +73,26 @@ def add_url_check(conn, id):
     current_date = datetime.now().strftime('%Y-%m-%d')
     with conn.cursor() as cursor:
         cursor.execute(
-            "INSERT INTO url_checks (url_id, created_at) VALUES (%s, %s)",
-            (id, current_date)
+            "INSERT INTO url_checks (url_id, status_code, created_at) VALUES (%s, %s, %s)",
+            (id, 200, current_date)
         )
         commit_changes(conn)
+
+
+def get_url_name_by_id(conn, id):
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
+        cursor.execute(
+            "SELECT name FROM urls WHERE id = %s",
+            (id)
+        )
+        return cursor.fetchone()[0]
 
 
 def get_latest_url_check(conn):
     with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
         cursor.execute(
             """
-            SELECT DISTINCT ON (url_id) url_id, created_at
+            SELECT DISTINCT ON (url_id) url_id, status_code, created_at
             FROM url_checks
             ORDER BY url_id, created_at DESC;
             """
