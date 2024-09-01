@@ -81,7 +81,7 @@ def add_new_url():
         return redirect(url_for('show_main_page'))
 
 
-# Обработчик формы запуска проверки для сайта
+# Обработчик формы запуска проверки для сайта 
 @app.post('/urls/<id>/check')
 def check_url(id):
     conn = open_connection()
