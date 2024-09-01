@@ -69,16 +69,16 @@ def get_url_checks_by_id(conn, id):
         return cursor.fetchall()
 
 
-def add_url_check(conn, id):
+def add_url_check(conn, id, h1, title, description):
     current_date = datetime.now().strftime('%Y-%m-%d')
     with conn.cursor() as cursor:
         cursor.execute(
             """
             INSERT INTO url_checks
-            (url_id, status_code, created_at)
-            VALUES (%s, %s, %s)
+            (url_id, status_code, h1, title, description, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s)
             """,
-            (id, 200, current_date)
+            (id, 200, h1, title, description, current_date)
         )
         commit_changes(conn)
 
