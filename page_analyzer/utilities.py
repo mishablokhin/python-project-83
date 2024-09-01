@@ -1,6 +1,7 @@
 from validators import url, ValidationError
 from urllib.parse import urlparse, urlunparse
 import requests
+from bs4 import BeautifulSoup
 
 
 def is_valid_url(url_to_validate):
@@ -28,3 +29,26 @@ def make_request_to_url(url):
     else:
         if site_request.status_code == 200:
             return 200
+
+
+def get_site_html_content(site_url):
+    response = requests.get(site_url)
+    html_content = response.text
+    return html_content
+
+
+def parse_site(content):
+    site_data = {
+        'h1': '',
+        'title': '',
+        'description': ''
+    }
+    soup = BeautifulSoup(content, 'html.parser')
+    if soup.h1:
+        site_data['h1'] = soup.h1.text
+    if soup.title:
+        site_data['title'] = soup.title.text
+    meta_tag = soup.find('meta', attrs={'name': 'description'})
+    if meta_tag:
+        site_data['description'] = meta_tag.get('content')
+    return site_data
