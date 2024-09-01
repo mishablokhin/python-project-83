@@ -20,7 +20,13 @@ from .db import (
     get_latest_url_check,
     get_url_name_by_id
 )
-from .utilities import is_valid_url, normalize_url, make_request_to_url
+from .utilities import (
+    is_valid_url,
+    normalize_url,
+    make_request_to_url,
+    get_site_html_content,
+    parse_site
+)
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -81,7 +87,12 @@ def check_url(id):
     conn = open_connection()
     url_name = get_url_name_by_id(conn, id)
     if make_request_to_url(url_name) == 200:
-        add_url_check(conn, id)
+        url_html = get_site_html_content(url_name)
+        site_data = parse_site(url_html)
+        h1, title, description = site_data['h1'], \
+            site_data['title'], \
+            site_data['description']
+        add_url_check(conn, id, h1, title, description)
         flash('Страница успешно проверена', 'alert-success')
     else:
         flash('Произошла ошибка при проверке', 'alert-danger')
