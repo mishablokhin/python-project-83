@@ -6,7 +6,8 @@ from flask import (
     url_for,
     redirect,
     flash,
-    get_flashed_messages
+    get_flashed_messages,
+    make_response
 )
 from .db import (
     open_connection,
@@ -78,7 +79,9 @@ def add_new_url():
             return redirect(url_for('show_url_info', id=added_url_id))
     else:
         flash('Некорректный URL', 'alert-danger')
-        return redirect(url_for('show_main_page'))
+        response = make_response(redirect(url_for('show_main_page')))
+        response.status_code = 422  # Устанавливаем код состояния 422
+        return response
 
 
 # Обработчик формы запуска проверки для сайта
