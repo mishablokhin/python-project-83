@@ -71,9 +71,7 @@ def add_new_url():
     if is_valid_url(url):
         normalized_url = normalize_url(url)
         conn = open_connection()
-        # Вот тут поменять - Страница уже существует и редирект на эту страницу
         if is_url_already_exists(conn, normalized_url):
-            print(normalized_url)
             existing_url_id = get_url_id_by_name(conn, normalized_url)
             flash('Страница уже существует', 'alert-info')
             return redirect(url_for('show_url_info', id=existing_url_id))

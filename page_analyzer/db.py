@@ -52,7 +52,6 @@ def get_url_info_by_id(conn, id):
             "SELECT * FROM urls WHERE id = %s",
             (int(id),)
         )
-        print(f"Executing query with id: {id} of type {type(id)}")
         return cursor.fetchone()
 
 
