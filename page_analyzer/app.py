@@ -19,7 +19,8 @@ from .db import (
     add_url_check,
     get_url_checks_by_id,
     get_latest_url_check,
-    get_url_name_by_id
+    get_url_name_by_id,
+    get_url_id_by_name
 )
 from .utilities import (
     is_valid_url,
@@ -70,8 +71,12 @@ def add_new_url():
     if is_valid_url(url):
         normalized_url = normalize_url(url)
         conn = open_connection()
+        # Вот тут поменять - Страница уже существует и редирект на эту страницу
         if is_url_already_exists(conn, normalized_url):
-            return redirect(url_for('show_main_page'))
+            print(normalized_url)
+            existing_url_id = get_url_id_by_name(conn, normalized_url)
+            flash('Страница уже существует', 'alert-info')
+            return redirect(url_for('show_url_info', id=existing_url_id))
         else:
             added_url_id = add_new_url_to_db(conn, normalized_url)
             close_connection(conn)

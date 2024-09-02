@@ -92,6 +92,15 @@ def get_url_name_by_id(conn, id):
         return cursor.fetchone()[0]
 
 
+def get_url_id_by_name(conn, url_name):
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
+        cursor.execute(
+            "SELECT id FROM urls WHERE name = %s",
+            (url_name,)
+        )
+        return cursor.fetchone()[0]
+
+
 def get_latest_url_check(conn):
     with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
         cursor.execute(
