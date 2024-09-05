@@ -55,7 +55,8 @@ def show_url_info(id):
     with get_db_connection() as conn:
         url_info = get_url_info_by_id(conn, id)
         url_checks_info = get_url_checks_by_id(conn, id)
-    return render_template('url.html', url_info=url_info, checks=url_checks_info)
+    return render_template('url.html',
+                           url_info=url_info, checks=url_checks_info)
 
 
 # Обработчик формы добавления нового сайта для проверки
@@ -70,7 +71,8 @@ def add_new_url():
                 if is_url_already_exists(conn, normalized_url):
                     existing_url_id = get_url_id_by_name(conn, normalized_url)
                     flash('Страница уже существует', 'alert-info')
-                    return redirect(url_for('show_url_info', id=existing_url_id))
+                    return redirect(url_for('show_url_info',
+                                            id=existing_url_id))
                 else:
                     added_url_id = add_new_url_to_db(conn, normalized_url)
                     flash('Страница успешно добавлена', 'alert-success')
@@ -95,10 +97,13 @@ def check_url(id):
             html_content = site_request.text
 
             site_data = get_seo_information_from_page(html_content)
-            h1, title, description = site_data['h1'], site_data['title'], site_data['description']
+            h1, title, description = site_data['h1'], \
+                site_data['title'], \
+                site_data['description']
 
             add_url_check(conn, id, h1, title, description)
             flash('Страница успешно проверена', 'alert-success')
         except requests.exceptions.RequestException as err:
-            flash('Произошла ошибка при проверке: {}'.format(err), 'alert-danger')
+            flash('Произошла ошибка при проверке: {}'.format(err),
+                  'alert-danger')
     return redirect(url_for('show_url_info', id=id))
