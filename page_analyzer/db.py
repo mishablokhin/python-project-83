@@ -2,6 +2,7 @@ import os
 import psycopg2
 from psycopg2.extras import NamedTupleCursor
 from dotenv import load_dotenv
+from contextlib import contextmanager
 from datetime import datetime
 
 load_dotenv()
@@ -9,17 +10,14 @@ load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 
-def open_connection():
+# Контекстный менеджер для открытия и закрытия соединения
+@contextmanager
+def get_db_connection():
     conn = psycopg2.connect(DATABASE_URL)
-    return conn
-
-
-def close_connection(conn):
-    conn.close()
-
-
-def commit_changes(conn):
-    conn.commit()
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 
 def is_url_already_exists(conn, url):
@@ -42,7 +40,7 @@ def add_new_url_to_db(conn, url):
             (url, current_date)
         )
         new_id = cursor.fetchone()[0]
-        commit_changes(conn)
+        conn.commit()
         return new_id
 
 
@@ -63,7 +61,7 @@ def get_url_checks_by_id(conn, id):
             WHERE url_id = %s
             ORDER BY created_at DESC, id DESC
             """,
-            (id)
+            (id,)
         )
         return cursor.fetchall()
 
@@ -79,14 +77,14 @@ def add_url_check(conn, id, h1, title, description):
             """,
             (id, 200, h1, title, description, current_date)
         )
-        commit_changes(conn)
+        conn.commit()
 
 
 def get_url_name_by_id(conn, id):
     with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
         cursor.execute(
             "SELECT name FROM urls WHERE id = %s",
-            (id)
+            (id,)
         )
         return cursor.fetchone()[0]
 
