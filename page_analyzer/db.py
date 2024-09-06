@@ -39,7 +39,10 @@ def add_new_url_to_db(url):
     with get_db_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING id",
+                """INSERT INTO urls (name, created_at)
+                   VALUES (%s, %s)
+                   RETURNING id
+                """,
                 (url, current_date)
             )
             new_id = cursor.fetchone()[0]
