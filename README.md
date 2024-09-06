@@ -1,5 +1,6 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/mishablokhin/python-project-83/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/mishablokhin/python-project-83/actions)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5c41c9b8da2717f96b50/maintainability)](https://codeclimate.com/github/mishablokhin/python-project-83/maintainability)
 
 ### Ссылка на Render.com для просмотра проекта:
 [Анализатор страниц](https://python-project-83-8pm5.onrender.com)
