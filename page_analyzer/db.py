@@ -20,10 +20,10 @@ def get_db_connection():
         conn.close()
 
 
-def is_url_already_exists(conn, url):
-    with conn.cursor() as cursor:
+def get_url_id_if_exists(conn, url):
+    with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
         cursor.execute("SELECT id FROM urls WHERE name = %s", (url,))
-        return cursor.fetchone() is not None
+        return cursor.fetchone()  # Возвращаем саму запись, если существует
 
 
 def get_all_urls(conn):
@@ -88,14 +88,6 @@ def get_url_name_by_id(conn, id):
         )
         return cursor.fetchone()[0]
 
-
-def get_url_id_by_name(conn, url_name):
-    with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
-        cursor.execute(
-            "SELECT id FROM urls WHERE name = %s",
-            (url_name,)
-        )
-        return cursor.fetchone()[0]
 
 
 def get_latest_url_check(conn):
