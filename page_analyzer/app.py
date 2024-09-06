@@ -11,7 +11,6 @@ from flask import (
 )
 from .db import (
     get_db_connection,
-    is_url_already_exists,
     add_new_url_to_db,
     get_all_urls,
     get_url_info_by_id,
@@ -19,7 +18,7 @@ from .db import (
     get_url_checks_by_id,
     get_latest_url_check,
     get_url_name_by_id,
-    get_url_id_by_name
+    get_url_id_if_exists
 )
 from .utilities import (
     is_valid_url,
@@ -67,9 +66,9 @@ def add_new_url():
         if is_valid_url(url):
             normalized_url = normalize_url(url)
             with get_db_connection() as conn:
-
-                if is_url_already_exists(conn, normalized_url):
-                    existing_url_id = get_url_id_by_name(conn, normalized_url)
+                existing_url = get_url_id_if_exists(conn, normalized_url)
+                if existing_url:
+                    existing_url_id = existing_url[0]
                     flash('Страница уже существует', 'alert-info')
                     return redirect(url_for('show_url_info',
                                             id=existing_url_id))
@@ -91,10 +90,10 @@ def check_url(id):
     with get_db_connection() as conn:
         url_name = get_url_name_by_id(conn, id)
         try:
-            site_request = requests.get(url_name)
-            site_request.raise_for_status()
+            response = requests.get(url_name)
+            response.raise_for_status()
 
-            html_content = site_request.text
+            html_content = response.text
 
             site_data = get_seo_information_from_page(html_content)
             h1, title, description = site_data['h1'], \
