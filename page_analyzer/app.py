@@ -42,8 +42,9 @@ def show_main_page():
 @app.get('/urls')
 def show_added_urls_page():
     urls = get_all_urls()
-    urls_latest_check = get_latest_url_check()
-    return render_template('urls.html', urls=urls, checks=urls_latest_check)
+    checks = get_latest_url_check()
+    checks_dict = {check.url_id: check for check in checks}
+    return render_template('urls.html', urls=urls, checks=checks_dict)
 
 
 # Страница с подробностями о конкретном адресе
@@ -64,10 +65,9 @@ def add_new_url():
             normalized_url = normalize_url(url)
             existing_url = get_url_id_if_exists(normalized_url)
             if existing_url:
-                existing_url_id = existing_url[0]
                 flash('Страница уже существует', 'alert-info')
                 return redirect(url_for('show_url_info',
-                                        id=existing_url_id))
+                                        id=existing_url))
             else:
                 added_url_id = add_new_url_to_db(normalized_url)
                 flash('Страница успешно добавлена', 'alert-success')
@@ -86,17 +86,16 @@ def check_url(id):
     url_name = get_url_name_by_id(id)
     try:
         response = requests.get(url_name)
-        response.raise_for_status()
+        status_code = response.status_code
+        if status_code == 200:
+            html_content = response.text
+            site_data = get_seo_information_from_page(html_content)
 
-        html_content = response.text
-        site_data = get_seo_information_from_page(html_content)
-
-        h1, title, description = site_data['h1'], \
-            site_data['title'], \
-            site_data['description']
-
-        add_url_check(id, h1, title, description)
-        flash('Страница успешно проверена', 'alert-success')
+            h1, title, description = site_data['h1'], \
+                site_data['title'], \
+                site_data['description']
+            add_url_check(id, status_code, h1, title, description)
+            flash('Страница успешно проверена', 'alert-success')
     except requests.exceptions.RequestException as err:
         flash('Произошла ошибка при проверке: {}'.format(err), 'alert-danger')
     return redirect(url_for('show_url_info', id=id))

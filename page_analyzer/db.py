@@ -24,7 +24,8 @@ def get_url_id_if_exists(url):
     with get_db_connection() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
             cursor.execute("SELECT id FROM urls WHERE name = %s", (url,))
-            return cursor.fetchone()
+            result = cursor.fetchone()
+            return result.id if result else None
 
 
 def get_all_urls():
@@ -53,7 +54,7 @@ def add_new_url_to_db(url):
 def get_url_info_by_id(id):
     with get_db_connection() as conn:
         with conn.cursor(cursor_factory=NamedTupleCursor) as cursor:
-            cursor.execute("SELECT * FROM urls WHERE id = %s", (int(id),))
+            cursor.execute("SELECT * FROM urls WHERE id = %s", (id,))
             return cursor.fetchone()
 
 
@@ -71,7 +72,7 @@ def get_url_checks_by_id(id):
             return cursor.fetchall()
 
 
-def add_url_check(id, h1, title, description):
+def add_url_check(id, status_code, h1, title, description):
     current_date = datetime.now().strftime('%Y-%m-%d')
     with get_db_connection() as conn:
         with conn.cursor() as cursor:
@@ -81,7 +82,7 @@ def add_url_check(id, h1, title, description):
                 (url_id, status_code, h1, title, description, created_at)
                 VALUES (%s, %s, %s, %s, %s, %s)
                 """,
-                (id, 200, h1, title, description, current_date)
+                (id, status_code, h1, title, description, current_date)
             )
             conn.commit()
 
