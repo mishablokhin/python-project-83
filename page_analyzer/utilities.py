@@ -4,9 +4,7 @@ from bs4 import BeautifulSoup
 
 
 def is_valid_url(url_to_validate):
-    if len(url_to_validate) > 255:
-        return False
-    return url(url_to_validate)
+    return len(url_to_validate) <= 255 and url(url_to_validate)
 
 
 def normalize_url(url_to_normalize):
