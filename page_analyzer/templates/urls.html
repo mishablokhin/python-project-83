@@ -26,18 +26,14 @@
           </a>
         </td>
         <td>
-          {% for check in checks %}
-            {% if check.url_id == url.id %}
-              {{ check.created_at }}
-            {% endif %}
-          {% endfor %}
+          {% if checks[url.id] %}
+            {{ checks[url.id].created_at }}
+          {% endif %}
         </td>
         <td>
-          {% for check in checks %}
-            {% if check.url_id == url.id %}
-              {{ check.status_code }}
-            {% endif %}
-          {% endfor %}
+          {% if checks[url.id] %}
+            {{ checks[url.id].status_code }}
+          {% endif %}
         </td>
       </tr>
       {% endfor %}
