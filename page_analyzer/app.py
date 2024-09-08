@@ -96,6 +96,6 @@ def check_url(id):
                 site_data['description']
             add_url_check(id, status_code, h1, title, description)
             flash('Страница успешно проверена', 'alert-success')
-    except requests.exceptions.RequestException as err:
+    except requests.exceptions.RequestException:
         flash('Произошла ошибка при проверке', 'alert-danger')
     return redirect(url_for('show_url_info', id=id))
