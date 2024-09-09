@@ -91,7 +91,9 @@ def check_url(id):
             html_content = response.text
             site_data = get_seo_information_from_page(html_content)
 
-            h1, title, description = site_data['h1'], site_data['title'], site_data['description']
+            h1, title, description = site_data['h1'], \
+                site_data['title'], \
+                site_data['description']
             add_url_check(id, status_code, h1, title, description)
             flash('Страница успешно проверена', 'alert-success')
         else:
