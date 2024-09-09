@@ -1,6 +1,7 @@
 import os
 from validators import ValidationError
 import requests
+from http import HTTPStatus
 from flask import (
     Flask,
     render_template,
@@ -87,7 +88,7 @@ def check_url(id):
     try:
         response = requests.get(url_name)
         status_code = response.status_code
-        if status_code == 200:
+        if status_code == HTTPStatus.OK:
             html_content = response.text
             site_data = get_seo_information_from_page(html_content)
 
